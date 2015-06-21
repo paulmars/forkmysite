@@ -1,2 +1,0 @@
-# revore
-Web templates

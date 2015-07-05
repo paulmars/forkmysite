@@ -1,3 +1,3 @@
-Go to [forkmysite.com](forkmysite.com)
+Go to [http://www.forkmysite.com](forkmysite.com)
 Now.
 or whatever, i don't care.

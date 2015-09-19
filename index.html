@@ -1,296 +1,393 @@
-<div id="maincontent">
-  <div id="card" class="pane">
-    <h1>
-      Paul McKellar
-    </h1>
-    <p>
-      SVAngel. @Square founding team. Programmer.
-    </p>
-    <p style="margin-top: 4em">
-      <a href="/gallery">Some Sites</a>
-    </p>
-  </div>
+<div id="reviewapp" class="container">
 </div>
 
-<div id="sites" style="display: none">
-</div>
-
-<script type="text/template" id="sites-template">
-  <div id="bar">
-    <ul id="site-list" class="unstyled">
-      <li>
-        <a href="/">
-          Paul McKellar
-        </a>
-      </li>
-      <li>
-        <a href="/gallery" data-sitename="gallery" data-siteurl="http://gallery-pm.revore.com/">Gallery</a>
-      </li>
-      <li>
-        <a href="/github" data-sitename="github" data-siteurl="http://github-pm.revore.com/">Github</a>
-      </li>
-      <li>
-        <a href="/bucketlist" data-sitename="bucketlist" data-siteurl="http://bucketlist-pm.revore.com/">Bucket List</a>
-      </li>
-      <li>
-        <a href="/products" data-sitename="product" data-siteurl="http://iusethis-pm.revore.com/">Products</a>
-      </li>
-    </ul>
-  </div>
-  <div id="app-preview-wrapper">
-    <iframe id="preview" src="http://gallery-pm.revore.com/"></iframe>
-  </div>
+<script type="text/template" id="reviews-list">
+  <h1>Pros and Cons</h1>
+  <form id="new-review" class="form-inline">
+    <label>I want to review a</label>
+    <input type="text" placeholder="name of thing" id="review-name" class="review-name">
+    <button id="addreview-button" type="submit" class='btn'>
+      <i class="icon-ok"></i>
+    </button>
+  </form>
+  <ul id="review-list" class="unstyled">
+  <ul>
 </script>
 
-<img src="http://junojs.imgix.net/files/c679179b-65d2-4d4d-aaa6-3d63c315fda4.jpeg?w=1024&h=1024&fit=max&s=9cc7c5f04f030b4dc190e0e9aa15f4c8" id="background" style='display: none'/>
+<script type="text/template" id="review-template">
+  <div class="review clearfix">
+    <div>
+      <h2>
+        <%= name %>
+        <a class="delete-review">
+          <i class="icon-remove"></i>
+        </a>
+      </h2>
+    </div>
+    <div class="positive-items items">
+      <form class="form-inline">
+        <input type="text" placeholder="pros" class="review-positive">
+        <button type="submit" class='posAdd btn'><i class="icon-ok"></i></button>
+      </form>
+      <ul class="unstyled">
+        <% _.each(positiveItems, function(i) { %>
+          <li>
+            <%= i %>
+            <a href="#" class="delete-item" data-item="<%= i %>">
+              <i class="icon-remove" data-item="<%= i %>"></i>
+            </a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    <div class="negative-items items">
+      <form class="form-inline">
+        <input type="text" placeholder="cons" class="review-negative">
+        <button type="submit" class='negAdd btn'><i class="icon-ok"></i></button>
+      </form>
+      <ul class="unstyled">
+        <% _.each(negativeItems, function(i) { %>
+          <li>
+            <%= i %>
+            <a href="#" class="delete-item" data-item="<%= i %>">
+              <i class="icon-remove" data-item="<%= i %>"></i>
+            </a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+  </div>
+</script>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.1.0/backbone.localStorage-min.js"></script>
 
 <style type="text/css">
   @import url("//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css");
-/* line 10, app.sass */
-body {
-  background-color: white;
-}
-
-/* line 13, app.sass */
-#background {
-  z-index: -1;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+@import url("//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css");
+/* line 18, app.sass */
+ul {
+  list-style: none;
 }
 
 /* line 21, app.sass */
+body {
+  background-color: #333333;
+  padding-top: 2em;
+  padding-bottom: 4em;
+}
+
+/* line 26, app.sass */
 h1 {
-  margin-bottom: 0.5em;
-  margin-top: 0;
-}
-
-/* line 25, app.sass */
-#card {
-  -webkit-box-shadow: 3px 3px 60px 1px black;
-  -moz-box-shadow: 3px 3px 60px 1px black;
-  box-shadow: 3px 3px 60px 1px black;
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
-  -ms-border-radius: 2px;
-  -o-border-radius: 2px;
-  border-radius: 2px;
-  margin: 0 auto;
-  margin-top: 5em;
-  padding: 3em 5em 2em 5em;
-  width: 300px;
-  background: white;
-  color: black;
-  text-align: center;
-  border: 1px solid silver;
-}
-@media (max-width: 479px) {
-  /* line 25, app.sass */
-  #card {
-    margin-top: 1em;
-    width: 200px;
-  }
-}
-
-/* line 41, app.sass */
-#sites {
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-/* line 51, app.sass */
-#bar {
   background-color: white;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 200px;
-  height: 100%;
+  border-left: 10px solid #e82c0c;
+  border-right: 10px solid #e82c0c;
+  color: #e82c0c;
+  padding: 0.4em 0.3em;
+  margin-bottom: 20px;
+  -webkit-box-shadow: 3px 6px 20px 1px black;
+  -moz-box-shadow: 3px 6px 20px 1px black;
+  box-shadow: 3px 6px 20px 1px black;
+}
+
+/* line 35, app.sass */
+#reviewapp {
+  margin-top: 1em;
+}
+
+/* line 38, app.sass */
+#new-review {
+  margin-bottom: 20px;
+  padding: 1em;
+  background-color: white;
+  border-left: 10px solid #e80c7a;
+  border-right: 10px solid #e80c7a;
+  -webkit-box-shadow: 3px 6px 20px 1px black;
+  -moz-box-shadow: 3px 6px 20px 1px black;
+  box-shadow: 3px 6px 20px 1px black;
+}
+/* line 45, app.sass */
+#new-review label {
+  font-size: 20px;
+  line-height: 28px;
+  margin-right: 10px;
+}
+
+/* line 50, app.sass */
+.review {
+  margin-bottom: 20px;
+  color: #333333;
+  background-color: white;
+  border-left: 10px solid #ff0dff;
+  border-right: 10px solid #ff0dff;
+  padding: 0 1em 1em 1em;
+  -webkit-box-shadow: 3px 6px 20px 1px black;
+  -moz-box-shadow: 3px 6px 20px 1px black;
+  box-shadow: 3px 6px 20px 1px black;
+}
+/* line 58, app.sass */
+.review a, .review a:visited, .review a:hover {
+  color: black;
 }
 
 /* line 60, app.sass */
-#site-list li:hover {
-  background-color: #eeeeee;
-}
-/* line 62, app.sass */
-#site-list a {
-  padding: 1em;
-  width: 100%;
-  display: block;
-}
-/* line 66, app.sass */
-#site-list a, #site-list a:hover, #site-list a:active, #site-list a:visited {
-  text-decoration: none;
+h2 {
+  padding-bottom: 0.1em;
+  margin-bottom: 0.1em;
 }
 
-/* line 69, app.sass */
-#app-preview-wrapper {
-  position: fixed;
-  left: 200px;
-  right: 0;
+/* line 63, app.sass */
+.delete-review, .delete-item {
+  float: right;
+  font-size: 14px;
+}
+
+/* line 67, app.sass */
+.items {
   float: left;
-  height: 100%;
+  width: 50%;
+}
+/* line 70, app.sass */
+.items li {
+  border: 1px;
+  padding: 10px 0;
+  line-height: 28px;
+  font-size: 18px;
+}
+/* line 75, app.sass */
+.items form {
+  padding-top: 1em;
 }
 
-/* line 76, app.sass */
-iframe {
-  border: none;
-  border-left: 1px solid #dddddd;
-  height: 100%;
-  width: 100%;
-  background-color: white;
+/* line 78, app.sass */
+.positive-items ul {
+  padding-right: 20px;
+}
+
+/* line 81, app.sass */
+#new-review, form, .delete-item, .delete-review {
+  display: none;
+}
+
+/* line 85, app.sass */
+.viewer-owner #new-review, .viewer-owner form, .viewer-owner .delete-item, .viewer-owner .delete-review {
+  display: block;
 }
 
 </style>
 
 <script type="text/javascript">
-  // Generated by CoffeeScript 1.6.3
+  // Generated by CoffeeScript 1.4.0
 (function() {
-  var Router, SitesView, getAnchor, logDebug, router, sitesView, sizeBackground;
+  var ENTER_KEY, Review, ReviewView, Reviews, ReviewsCollection, ReviewsView, logDebug;
 
-  logDebug = false;
+  logDebug = true;
 
-  $.fn.fullBg = function() {
-    var bgImg, resizeImg;
-    resizeImg = function() {
-      var heightdiff, heightratio, imgheight, imgwidth, widthdiff, widthratio, winheight, winwidth;
-      imgwidth = bgImg.width();
-      imgheight = bgImg.height();
-      winwidth = $(window).width();
-      winheight = $(window).height();
-      widthratio = winwidth / imgwidth;
-      heightratio = winheight / imgheight;
-      widthdiff = heightratio * imgwidth;
-      heightdiff = widthratio * imgheight;
-      if (heightdiff > winheight) {
-        return bgImg.css({
-          width: winwidth + "px",
-          height: heightdiff + "px"
-        });
-      } else {
-        return bgImg.css({
-          width: widthdiff + "px",
-          height: winheight + "px"
-        });
-      }
-    };
-    bgImg = $(this);
-    resizeImg();
-    return $(window).resize(function() {
-      return resizeImg();
-    });
-  };
+  ENTER_KEY = 13;
 
-  sizeBackground = function() {
-    return $("#background").show().fullBg();
-  };
-
-  sizeBackground();
-
-  setTimeout(sizeBackground, 1000);
-
-  SitesView = Backbone.View.extend({
-    el: '#sites',
-    className: "pane",
-    template: _.template($('#sites-template').html()),
-    render: function() {
-      this.$el.html(this.template());
-      this.setLinks();
-      return this;
+  Review = Backbone.Model.extend({
+    defaults: {
+      name: '',
+      positiveItems: [],
+      negativeItems: []
     },
-    initialize: function() {},
-    setLinks: function() {
-      return $("a[data-siteurl]").click(function(e) {
-        var link;
-        e.preventDefault();
-        link = $(this);
-        if (logDebug) {
-          console.log("preview", link.data("sitename"), link.data("siteurl"));
-        }
-        router.navigate(link.data("sitename"), true);
-        return false;
+    addNeg: function(item) {
+      var items;
+      if (!item) {
+        return;
+      }
+      items = this.get("negativeItems");
+      items = _.uniq(items.concat(item));
+      return this.save({
+        negativeItems: items
+      });
+    },
+    remNeg: function(item) {
+      var items;
+      items = this.get("negativeItems");
+      items = _.without(items, item);
+      return this.save({
+        negativeItems: items
+      });
+    },
+    addPos: function(item) {
+      var items;
+      if (!item) {
+        return;
+      }
+      items = this.get("positiveItems");
+      items = _.uniq(items.concat(item));
+      return this.save({
+        positiveItems: items
+      });
+    },
+    remPos: function(item) {
+      var items;
+      console.log("item", item);
+      items = this.get("positiveItems");
+      items = _.without(items, item);
+      return this.save({
+        positiveItems: items
       });
     }
   });
 
-  sitesView = new SitesView();
-
-  sitesView.render();
-
-  Router = Backbone.Router.extend({
-    routes: {
-      "": "profile",
-      "*path": "sitename"
-    },
-    profile: function() {
-      $(".page").hide();
-      return $("#card").show();
-    },
-    sitename: function(_path) {
-      var endUrlFragment, previewFrame, siteurl, _sitename;
-      _sitename = _path.split("/")[0];
-      endUrlFragment = _path.slice(7);
-      $(".page").hide();
-      sitesView.render();
-      $("#sites").show();
-      if (logDebug) {
-        console.log("sitename", _sitename);
-      }
-      siteurl = $("a[data-sitename='" + _sitename + "']").data("siteurl");
-      previewFrame = document.getElementById("preview");
-      return previewFrame.contentWindow.location = siteurl + endUrlFragment;
-    }
+  ReviewsCollection = Backbone.Collection.extend({
+    model: Review,
+    url: '/data/reviews'
   });
 
-  router = new Router();
+  Reviews = new ReviewsCollection([]);
 
-  getAnchor = function() {
-    var i, url;
-    url = window.location.href;
-    i = url.indexOf("#") + 1;
-    if (i === 0) {
-      return null;
-    } else {
-      return url.substring(i);
-    }
+  Reviews.comparator = function(review) {
+    console.log(review.get("createdAt"));
+    return 0 - Date.parse(review.get("createdAt"));
   };
 
-  $(window).on("hashchange", function() {
-    return router.navigate(getAnchor(), true);
-  });
+  Reviews.fetch();
 
-  $("a").click(function(e) {
-    var href, protocol;
-    e.preventDefault();
-    href = $(this).attr("href");
-    protocol = this.protocol + "//";
-    if (href.slice(protocol.length) !== protocol) {
-      return router.navigate(href, true);
+  ReviewView = Backbone.View.extend({
+    tagName: 'li',
+    template: _.template($('#review-template').html()),
+    render: function() {
+      this.$el.html(this.template(this.model.toJSON()));
+      this.$posInput = this.$el.find(".review-positive");
+      this.$negInput = this.$el.find(".review-negative");
+      return this;
+    },
+    initialize: function() {
+      return this.listenTo(this.model, 'change', this.render);
+    },
+    events: {
+      'keypress .review-positive': 'positiveReview',
+      'keypress .review-negative': 'negativeReview',
+      'click .delete-review': 'deleteReview',
+      'click .negative-items': 'remNeg',
+      'click .positive-items': 'remPos',
+      'click .posAdd': 'addPos',
+      'click .negAdd': 'addNeg'
+    },
+    addFromForm: function(e) {
+      return console.log("add from form", e);
+    },
+    remNeg: function(e) {
+      var link;
+      link = $(e.target);
+      return this.model.remNeg(link.data("item"));
+    },
+    remPos: function(e) {
+      var link;
+      link = $(e.target);
+      return this.model.remPos(link.data("item"));
+    },
+    addPos: function() {
+      this.model.addPos(this.$posInput.val());
+      this.$posInput.val("").focus();
+      return false;
+    },
+    addNeg: function() {
+      this.model.addNeg(this.$negInput.val());
+      this.$negInput.val("").focus();
+      return false;
+    },
+    positiveReview: function(e) {
+      if (e.which !== ENTER_KEY) {
+        return;
+      }
+      addPos();
+      return false;
+    },
+    negativeReview: function(e) {
+      if (e.which !== ENTER_KEY) {
+        return;
+      }
+      addNeg();
+      return false;
+    },
+    deleteReview: function() {
+      if (logDebug) {
+        console.log("delete review");
+      }
+      return this.model.destroy();
     }
   });
 
-  setTimeout(function() {
-    if (logDebug) {
-      console.log(window.location.pathname);
+  ReviewsView = Backbone.View.extend({
+    el: '#reviewapp',
+    template: _.template($('#reviews-list').html()),
+    events: {
+      'keypress .review-input': 'addOnEnter',
+      'click #addreview-button': 'createFromForm'
+    },
+    render: function() {
+      if (logDebug) {
+        console.log("lists view render", this.$el);
+      }
+      this.$el.html(this.template());
+      this.$reviewList = this.$el.find("#review-list");
+      this.reviewName = $('#review-name');
+      this.reviewName.focus();
+      return this;
+    },
+    initialize: function() {
+      if (logDebug) {
+        console.log("lists view initialize");
+      }
+      this.listenTo(Reviews, 'reset', this.addAll);
+      this.listenTo(Reviews, 'add', this.redo);
+      this.listenTo(Reviews, 'remove', this.redo);
+      this.listenTo(Reviews, 'create', this.redo);
+      return this.redo();
+    },
+    redo: function() {
+      this.render();
+      return this.addAll();
+    },
+    addOne: function(review) {
+      var view;
+      view = new ReviewView({
+        model: review
+      });
+      return this.$reviewList.append(view.render().el);
+    },
+    addAll: function() {
+      if (logDebug) {
+        console.log("list view add all", Reviews.length);
+      }
+      this.$reviewList.html("");
+      return Reviews.each(this.addOne, this);
+    },
+    emptyForm: function() {
+      return this.reviewName.val("");
+    },
+    createFromForm: function() {
+      if (this.reviewName.val().trim() === "") {
+        return;
+      }
+      Reviews.create({
+        name: this.reviewName.val().trim(),
+        createdAt: new Date()
+      });
+      this.emptyForm();
+      return false;
+    },
+    addOnEnter: function(e) {
+      if (logDebug) {
+        console.log("add on enter");
+      }
+      if (e.which !== ENTER_KEY) {
+        return;
+      }
+      this.createFromForm();
+      return false;
     }
-    router.navigate(window.location.pathname.slice(1), {
-      trigger: true
-    });
-    return Backbone.history.start({
-      pushState: true,
-      hashChange: false
-    });
-  }, 500);
+  });
+
+  new ReviewsView();
+
+  $("title").text("Reviews");
 
 }).call(this);
 

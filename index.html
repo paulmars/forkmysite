@@ -1,306 +1,323 @@
-
-<div class="container">
-  <div id="profile">
+<div id="products">
+  <div class="header">
+    <h1>I USE THIS.</h1>
+    <h2>What I use to get stuff done.</h2>
   </div>
-
-  <div id="main-page">
+  <div class="composer">
+  <form class="form-inline">
+    <label>For</label>
+    <input type="text" placeholder="pens" id="product-for" class="product-input">
+    <label>use</label>
+    <input type="text" placeholder="bics" id="product-title" class="product-input">
+    <label>from</label>
+    <input type="text" placeholder="http://link.to" id="product-link" class="product-input">
+    <button id="save-button" type="submit" class='btn'>Save</button>
+  </form>
   </div>
+  <ul id="products-list" class="unstyled">
+  </ul>
 </div>
 
-<script type="text/template" id="profile-template">
-<h1 id="githubname">
-  <a href="https://github.com/<%= login %>">
-    <span>&lt;</span><%= name %><span>&gt;</span>
-  </a>
-</h1>
-
-<ul id="links" class="unstyled clearfix">
-  <li>
-    <a target="_top" href="https://github.com/<%= login %>">
-      <%= followers %><br>
-      <span>Followers</span>
-    </a>
-  </li>
-  <li>
-    <a target="_top" href="https://github.com/<%= login %>">
-      <%= following %><br>
-      <span>Following</span>
-    </a>
-  </li>
-  <li>
-    <a target="_top" href="https://gist.github.com/<%= login %>">
-      <%= public_gists %><br>
-      <span>Gists</span>
-    </a>
-  </li>
-  <li>
-    <a target="_top" href="https://github.com/<%= login %>?tab=repositories">
-      <%= public_repos %><br>
-      <span>Repos</span>
-    </a>
-  </li>
-</ul>
+<script type="text/template" id="products-list">
+  <div class="header">
+    <h1>I USE THIS.</h1>
+    <h2>What I use to get stuff done.</h2>
+  </div>
+  <div class="composer">
+  <form class="form-inline">
+    <label>For</label>
+    <input type="text" placeholder="pens" id="product-for" class="product-input">
+    <label>use</label>
+    <input type="text" placeholder="bics" id="product-title" class="product-input">
+    <label>from</label>
+    <input type="text" placeholder="http://link.to" id="product-link" class="product-input">
+    <button id="save-button" type="submit" class='btn'>Save</button>
+  </form>
+  </div>
+  <ul id="products-list" class="unstyled">
+  </ul>
 </script>
 
-<script type="text/template" id="main-template">
-<div class="github-list">
-  <h2>
-    <a href="#gists">Gists</a>
-  </h2>
-  <p class="lead">
-    My public gists on Github. Code snippits I use and reuse in multiple places.
-  </p>
-
-  <h2>
-    <a href="#stars">Stars</a>
-  </h2>
-  <p class="lead">
-    Repositories I have found interesting.
-  </p>
-</div>
-</script>
-
-<script type="text/template" id="gists-template">
-<div class="gists">
-  <h2>Gists</h2>
-
-  <p class="lead">
-    My public gists on Github. Code snippits I use and reuse in multiple places.
-  </p>
-
-  <% _.each(gists, function(gist) { %>
-    <div class='gist'>
-      <div>
-        <h3>
-          <a href="<%= gist.html_url  %>">
-            <%= gist.description %>
-          </a>
-        </h3>
-      </div>
-    </div>
-  <% }); %>
-</div>
-</script>
-
-<script type="text/template" id="stars-template">
-<div class="stars">
-  <h2>Stared Repositories</h2>
-
-  <p class="lead">
-    Repositories I have found interesting.
-  </p>
-
-  <% _.each(stars, function(star) { %>
-    <div class="star">
-      <h3>
-        <a href="<%= star.html_url %>"><%= star.name %></a>
-        <small><%= star.full_name %></small>
-      </h3>
-      <p class="description">
-        <%= star.description %>
-      </p>
-      <p>
-        <strong>Language:</strong> <%= star.language %><br>
-        <strong>Watchers:</strong> <%= star.watchers_count %><br>
-        <strong>Homepage:</strong> <a href="<%= star.homepage %>"><%= star.homepage %></a><br>
-      </p>
-    </div>
-  <% }); %>
-</div>
+<script type="text/template" id="product-template">
+  For <%= use %> use
+  <% if ( link.trim() != "" ) { %>
+    <a href="<%= link %>"><%= title %></a>
+  <% } else { %>
+    <%= title %>
+  <% } %>
+  <a href="#" class="delete-product"><i class="icon-remove"></i></a>
 </script>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
+
 
 <style type="text/css">
   @import url("//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css");
-/* line 18, app.sass */
-html, body {
-  background-color: #333333;
+@import url("//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css");
+/* line 13, app.sass */
+body {
+  background-color: #404040;
 }
 
-/* line 21, app.sass */
-a, a:visited, a:hover, a:active {
-  color: #b23412;
-  text-decoration: none;
+/* line 16, app.sass */
+ul {
+  list-style: none;
 }
 
-/* line 25, app.sass */
-.container {
+/* line 19, app.sass */
+h1 {
+  font-size: 32px;
+  line-height: 32px;
+  margin: 0;
+}
+
+/* line 24, app.sass */
+h2 {
+  font-size: 18px;
+  line-height: 18px;
+  font-weight: normal;
+}
+
+/* line 36, app.sass */
+h1, h2 {
+  text-shadow: 1px 1px 10px black;
+}
+
+/* line 39, app.sass */
+a, a:hover, a:active, a:visited {
+  color: #04bf9d;
+}
+
+/* line 42, app.sass */
+.header {
+  background-color: #04bf9d;
+  padding: 1em;
+  color: white;
+}
+
+/* line 47, app.sass */
+#products {
+  margin: 0 auto;
+  margin-top: 3em;
+  width: 600px;
+  background-color: white;
+  border: 3px solid #04bf9d;
   -webkit-box-shadow: 3px 6px 20px 1px black;
   -moz-box-shadow: 3px 6px 20px 1px black;
   box-shadow: 3px 6px 20px 1px black;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -ms-border-radius: 4px;
-  -o-border-radius: 4px;
-  border-radius: 4px;
-  border: 1px solid #aaaaaa;
-  width: 600px;
-  margin: 2em auto 6em auto;
-  background-color: white;
-  color: #333333;
 }
-
-/* line 34, app.sass */
-#githubname {
-  text-align: center;
-  margin: 1.4em 0 1.1em 0;
-  font-size: 36px;
+/* line 54, app.sass */
+#products .composer {
+  padding: 0 1em;
 }
-/* line 38, app.sass */
-#githubname span {
-  color: #cccccc;
-  padding: 3px;
+/* line 56, app.sass */
+#products .composer {
+  padding-top: 1em;
+  font-size: 16px;
 }
-/* line 41, app.sass */
-#githubname a, #githubname a:hover, #githubname a:visited, #githubname a:active {
-  text-decoration: none;
-  color: #333333;
+/* line 59, app.sass */
+#products ul {
+  margin: 1em;
 }
-
-/* line 45, app.sass */
-#links {
-  width: 450px;
-  margin: 0 auto;
-  margin-bottom: 2em;
-}
-/* line 49, app.sass */
-#links li {
-  float: left;
-  width: 110px;
-  margin: 0;
-  padding: 10px 0 8px 0;
-  text-align: center;
-}
-/* line 55, app.sass */
-#links li a {
-  font-size: 24px;
-  line-height: 14px;
-  color: #333333;
-  font-weight: bold;
-}
-/* line 60, app.sass */
-#links li a:hover {
-  text-decoration: none;
-}
-/* line 62, app.sass */
-#links li span {
-  font-size: 12px;
-  color: #999999;
-  font-weight: normal;
+/* line 61, app.sass */
+#products ul li {
+  font-size: 18px;
+  margin-bottom: 1em;
+  padding-bottom: 1em;
+  border-bottom: 1px solid rgba(64, 64, 64, 0.1);
 }
 /* line 66, app.sass */
-#links li:hover {
-  background-color: #eeeeee;
+#products ul li:first-child {
+  padding-top: 0.5em;
+}
+/* line 68, app.sass */
+#products ul li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
-/* line 69, app.sass */
-.github-list, .gists, .stars {
-  padding: 1em;
+@media (min-width: 1200px) {
+  /* line 73, app.sass */
+  #products {
+    width: 600px;
+  }
+}
+@media (min-width: 976px) and (max-width: 1199px) {
+  /* line 77, app.sass */
+  #products {
+    width: 600px;
+  }
+}
+@media (min-width: 768px) and (max-width: 975px) {
+  /* line 81, app.sass */
+  #products {
+    width: 600px;
+  }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  /* line 85, app.sass */
+  #products {
+    width: 400px;
+  }
+}
+@media (max-width: 479px) {
+  /* line 89, app.sass */
+  #products {
+    width: 260px;
+  }
+}
+/* line 92, app.sass */
+.delete-product {
+  float: right;
 }
 
-/* line 73, app.sass */
-.gists .lead {
-  margin-bottom: 1.5em;
+/* line 95, app.sass */
+input {
+  width: 120px;
 }
 
-/* line 76, app.sass */
-.gist {
-  border-bottom: 1px solid #eeeeee;
-}
-
-/* line 79, app.sass */
-.star {
-  border-bottom: 1px solid #eeeeee;
+/* line 99, app.sass */
+.viewer-notowner .composer, .viewer-notowner .delete-product {
+  display: none;
 }
 
 </style>
 
 <script type="text/javascript">
-  // Generated by CoffeeScript 1.4.0
+  // Generated by CoffeeScript 1.6.3
 (function() {
-  var clearMain, gistTemplate, gistUrl, githubUsername, loadAndSet, logDebug, profileTemplate, profileUrl, route, setGists, setMain, setProfile, setStars, starsTemplate, starsUrl;
+  var ENTER_KEY, Product, ProductView, Products, ProductsCollection, ProductsView, logDebug;
 
   logDebug = false;
 
-  githubUsername = "paulmars";
+  ENTER_KEY = 13;
 
-  profileUrl = "https://api.github.com/users/" + githubUsername;
-
-  profileTemplate = _.template($("#profile-template").text());
-
-  gistUrl = "https://api.github.com/users/" + githubUsername + "/gists";
-
-  gistTemplate = _.template($("#gists-template").text());
-
-  starsUrl = "https://api.github.com/users/" + githubUsername + "/starred";
-
-  starsTemplate = _.template($("#stars-template").text());
-
-  loadAndSet = function(url, callback) {
-    return $.ajax({
-      url: url,
-      method: "GET",
-      success: callback,
-      failure: function() {
-        return console.log("failed to load", url);
-      }
-    });
-  };
-
-  clearMain = function() {
-    return $("#main-page").html();
-  };
-
-  setMain = function() {
-    return $("#main-page").html($("#main-template").html());
-  };
-
-  setGists = function() {
-    clearMain();
-    return loadAndSet(gistUrl, function(data) {
-      data = gistTemplate({
-        gists: data
-      });
-      return $("#main-page").html(data);
-    });
-  };
-
-  setStars = function() {
-    clearMain();
-    return loadAndSet(starsUrl, function(data) {
-      data = starsTemplate({
-        stars: data
-      });
-      return $("#main-page").html(data);
-    });
-  };
-
-  setProfile = function() {
-    return loadAndSet(profileUrl, function(data) {
-      console.log("data", data);
-      return $("#profile").html(profileTemplate(data));
-    });
-  };
-
-  route = function() {
-    var location;
-    location = window.location.hash;
-    if (location === "#stars") {
-      return setStars();
-    } else if (location === "#gists") {
-      return setGists();
-    } else {
-      return setMain();
+  Product = Backbone.Model.extend({
+    defaults: {
+      use: '',
+      title: '',
+      link: ''
     }
-  };
+  });
 
-  setProfile();
+  ProductsCollection = Backbone.Collection.extend({
+    model: Product,
+    url: '/data/products'
+  });
 
-  $(window).bind('hashchange', route);
+  Products = new ProductsCollection([]);
 
-  route();
+  Products.fetch();
+
+  ProductView = Backbone.View.extend({
+    tagName: 'li',
+    template: _.template($('#product-template').html()),
+    events: {
+      'click .delete-product': 'deleteProduct'
+    },
+    render: function() {
+      this.$el.html(this.template(this.model.toJSON()));
+      return this;
+    },
+    initialize: function() {
+      return this.listenTo(this.model, 'change', this.render);
+    },
+    deleteProduct: function() {
+      if (logDebug) {
+        console.log("delete product");
+      }
+      return this.model.destroy();
+    }
+  });
+
+  ProductsView = Backbone.View.extend({
+    el: '#products',
+    template: _.template($('#products-list').html()),
+    events: {
+      'keypress .product-input': 'addOnEnter',
+      'click #save-button': 'createFromForm'
+    },
+    render: function() {
+      if (logDebug) {
+        console.log("lists view render", this.$el);
+      }
+      this.productFor = $('#product-for');
+      this.productTitle = $('#product-title');
+      this.productLink = $('#product-link');
+      this.productFor.focus();
+      return this;
+    },
+    initialize: function() {
+      if (logDebug) {
+        console.log("lists view initialize");
+      }
+      this.listenTo(Products, 'reset', this.addAll);
+      this.listenTo(Products, 'add', this.redo);
+      this.listenTo(Products, 'remove', this.redo);
+      this.listenTo(Products, 'create', this.redo);
+      return this.redo();
+    },
+    redo: function() {
+      this.render();
+      return this.addAll();
+    },
+    addOne: function(product) {
+      var view;
+      if (logDebug) {
+        console.log("product view add one", product);
+      }
+      view = new ProductView({
+        model: product
+      });
+      return $('#products-list').append(view.render().el);
+    },
+    addAll: function() {
+      if (logDebug) {
+        console.log("list view add all", Products.length);
+      }
+      $('#products-list').html('');
+      return Products.each(this.addOne, this);
+    },
+    emptyForm: function() {
+      this.productFor.val("");
+      this.productTitle.val("");
+      return this.productLink.val("");
+    },
+    createFromForm: function() {
+      var data, titleVal, useVal;
+      useVal = this.productFor.val().trim();
+      titleVal = this.productTitle.val().trim();
+      if (!(useVal && titleVal)) {
+        console.log("two vals");
+        false;
+        return;
+      }
+      data = {
+        use: useVal,
+        title: titleVal,
+        link: this.productLink.val().trim()
+      };
+      Products.create(data);
+      this.emptyForm();
+      return false;
+    },
+    addOnEnter: function(e) {
+      if (logDebug) {
+        console.log("add on enter");
+      }
+      if (e.which !== ENTER_KEY) {
+        return;
+      }
+      this.createFromForm();
+      return false;
+    }
+  });
+
+  new ProductsView();
+
+  $("title").text("Products");
 
 }).call(this);
 

@@ -1,205 +1,306 @@
-<div id="gists">
-  <h1>Gister</h1>
-  <div class="composer clearfix">
-    <form>
-      <div class="form-group">
-        <textarea class="form-control" name="code" id="code"></textarea>
-      </div>
-      <div class="form-group">
-        <button id="save-button" type="submit" class="btn btn-default pull-right">Save</button>
-      </div>
-    </form>
+
+<div class="container">
+  <div id="profile">
   </div>
-  <ul id="gists-list" class="list-unstyled">
-  </ul>
+
+  <div id="main-page">
+  </div>
 </div>
 
-<div id="code-view">
-</div>
+<script type="text/template" id="profile-template">
+<h1 id="githubname">
+  <a href="https://github.com/<%= login %>">
+    <span>&lt;</span><%= name %><span>&gt;</span>
+  </a>
+</h1>
 
-<script type="text/template" id="gist-template">
-  <div class="view-controls">
-    <a href="#" class="delete-gist"><i class="fa fa-trash-o"></i></a>
-  </div>
-  <pre><%= code %></pre>
+<ul id="links" class="unstyled clearfix">
+  <li>
+    <a target="_top" href="https://github.com/<%= login %>">
+      <%= followers %><br>
+      <span>Followers</span>
+    </a>
+  </li>
+  <li>
+    <a target="_top" href="https://github.com/<%= login %>">
+      <%= following %><br>
+      <span>Following</span>
+    </a>
+  </li>
+  <li>
+    <a target="_top" href="https://gist.github.com/<%= login %>">
+      <%= public_gists %><br>
+      <span>Gists</span>
+    </a>
+  </li>
+  <li>
+    <a target="_top" href="https://github.com/<%= login %>?tab=repositories">
+      <%= public_repos %><br>
+      <span>Repos</span>
+    </a>
+  </li>
+</ul>
+</script>
+
+<script type="text/template" id="main-template">
+<div class="github-list">
+  <h2>
+    <a href="#gists">Gists</a>
+  </h2>
+  <p class="lead">
+    My public gists on Github. Code snippits I use and reuse in multiple places.
+  </p>
+
+  <h2>
+    <a href="#stars">Stars</a>
+  </h2>
+  <p class="lead">
+    Repositories I have found interesting.
+  </p>
+</div>
+</script>
+
+<script type="text/template" id="gists-template">
+<div class="gists">
+  <h2>Gists</h2>
+
+  <p class="lead">
+    My public gists on Github. Code snippits I use and reuse in multiple places.
+  </p>
+
+  <% _.each(gists, function(gist) { %>
+    <div class='gist'>
+      <div>
+        <h3>
+          <a href="<%= gist.html_url  %>">
+            <%= gist.description %>
+          </a>
+        </h3>
+      </div>
+    </div>
+  <% }); %>
+</div>
+</script>
+
+<script type="text/template" id="stars-template">
+<div class="stars">
+  <h2>Stared Repositories</h2>
+
+  <p class="lead">
+    Repositories I have found interesting.
+  </p>
+
+  <% _.each(stars, function(star) { %>
+    <div class="star">
+      <h3>
+        <a href="<%= star.html_url %>"><%= star.name %></a>
+        <small><%= star.full_name %></small>
+      </h3>
+      <p class="description">
+        <%= star.description %>
+      </p>
+      <p>
+        <strong>Language:</strong> <%= star.language %><br>
+        <strong>Watchers:</strong> <%= star.watchers_count %><br>
+        <strong>Homepage:</strong> <a href="<%= star.homepage %>"><%= star.homepage %></a><br>
+      </p>
+    </div>
+  <% }); %>
+</div>
 </script>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.1.0/backbone.localStorage-min.js
-" type="text/javascript"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js"></script>
 
-<style>
-  @import url("//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css");
-@import url("//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css");
-/* line 4, app.sass */
-#code-view {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  right: 0;
-  background-color: white;
-}
-
-/* line 12, app.sass */
-#gists {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 5px;
-  right: 51%;
-  background-color: white;
-  overflow: scroll;
+<style type="text/css">
+  @import url("//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css");
+/* line 18, app.sass */
+html, body {
+  background-color: #333333;
 }
 
 /* line 21, app.sass */
-.composer {
-  margin-bottom: 20px;
+a, a:visited, a:hover, a:active {
+  color: #b23412;
+  text-decoration: none;
 }
 
-/* line 24, app.sass */
-.view-controls {
-  float: right;
-  padding-right: 5px;
-  padding-top: 3px;
+/* line 25, app.sass */
+.container {
+  -webkit-box-shadow: 3px 6px 20px 1px black;
+  -moz-box-shadow: 3px 6px 20px 1px black;
+  box-shadow: 3px 6px 20px 1px black;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  border: 1px solid #aaaaaa;
+  width: 600px;
+  margin: 2em auto 6em auto;
+  background-color: white;
+  color: #333333;
 }
 
-/* line 29, app.sass */
-pre {
-  cursor: pointer;
-  cursor: hand;
+/* line 34, app.sass */
+#githubname {
+  text-align: center;
+  margin: 1.4em 0 1.1em 0;
+  font-size: 36px;
+}
+/* line 38, app.sass */
+#githubname span {
+  color: #cccccc;
+  padding: 3px;
+}
+/* line 41, app.sass */
+#githubname a, #githubname a:hover, #githubname a:visited, #githubname a:active {
+  text-decoration: none;
+  color: #333333;
+}
+
+/* line 45, app.sass */
+#links {
+  width: 450px;
+  margin: 0 auto;
+  margin-bottom: 2em;
+}
+/* line 49, app.sass */
+#links li {
+  float: left;
+  width: 110px;
+  margin: 0;
+  padding: 10px 0 8px 0;
+  text-align: center;
+}
+/* line 55, app.sass */
+#links li a {
+  font-size: 24px;
+  line-height: 14px;
+  color: #333333;
+  font-weight: bold;
+}
+/* line 60, app.sass */
+#links li a:hover {
+  text-decoration: none;
+}
+/* line 62, app.sass */
+#links li span {
+  font-size: 12px;
+  color: #999999;
+  font-weight: normal;
+}
+/* line 66, app.sass */
+#links li:hover {
+  background-color: #eeeeee;
+}
+
+/* line 69, app.sass */
+.github-list, .gists, .stars {
+  padding: 1em;
+}
+
+/* line 73, app.sass */
+.gists .lead {
+  margin-bottom: 1.5em;
+}
+
+/* line 76, app.sass */
+.gist {
+  border-bottom: 1px solid #eeeeee;
+}
+
+/* line 79, app.sass */
+.star {
+  border-bottom: 1px solid #eeeeee;
 }
 
 </style>
 
-<script>
-  // Generated by CoffeeScript 1.6.3
+<script type="text/javascript">
+  // Generated by CoffeeScript 1.4.0
 (function() {
-  var Gist, GistView, Gists, GistsCollection, GistsView, editor, logDebug;
+  var clearMain, gistTemplate, gistUrl, githubUsername, loadAndSet, logDebug, profileTemplate, profileUrl, route, setGists, setMain, setProfile, setStars, starsTemplate, starsUrl;
 
   logDebug = false;
 
-  Gist = Backbone.Model.extend({
-    defaults: {
-      code: ''
-    }
-  });
+  githubUsername = "paulmars";
 
-  GistsCollection = Backbone.Collection.extend({
-    model: Gist,
-    url: '/data/gists'
-  });
+  profileUrl = "https://api.github.com/users/" + githubUsername;
 
-  Gists = new GistsCollection([]);
+  profileTemplate = _.template($("#profile-template").text());
 
-  Gists.fetch();
+  gistUrl = "https://api.github.com/users/" + githubUsername + "/gists";
 
-  GistView = Backbone.View.extend({
-    tagName: 'li',
-    template: _.template($('#gist-template').html()),
-    events: {
-      'click .delete-gist': 'deleteGist',
-      'click pre': 'viewCode'
-    },
-    render: function() {
-      this.$el.html(this.template(this.model.toJSON()));
-      return this;
-    },
-    initialize: function() {
-      return this.listenTo(this.model, 'change', this.render);
-    },
-    deleteGist: function() {
-      if (logDebug) {
-        console.log("delete gist", this.model);
-      }
-      return this.model.destroy();
-    },
-    viewCode: function() {
-      if (logDebug) {
-        console.log("view code", this.model);
-      }
-      return editor.setValue(this.model.get("code"), -1);
-    }
-  });
+  gistTemplate = _.template($("#gists-template").text());
 
-  GistsView = Backbone.View.extend({
-    el: '#gists',
-    events: {
-      'click #save-button': 'createFromForm'
-    },
-    render: function() {
-      if (logDebug) {
-        console.log("lists view render", this.$el);
+  starsUrl = "https://api.github.com/users/" + githubUsername + "/starred";
+
+  starsTemplate = _.template($("#stars-template").text());
+
+  loadAndSet = function(url, callback) {
+    return $.ajax({
+      url: url,
+      method: "GET",
+      success: callback,
+      failure: function() {
+        return console.log("failed to load", url);
       }
-      this.codeTextArea = $('#code');
-      this.codeTextArea.focus();
-      return this;
-    },
-    initialize: function() {
-      if (logDebug) {
-        console.log("lists view initialize");
-      }
-      this.listenTo(Gists, 'reset', this.addAll);
-      this.listenTo(Gists, 'add', this.redo);
-      this.listenTo(Gists, 'remove', this.redo);
-      this.listenTo(Gists, 'create', this.redo);
-      return this.redo();
-    },
-    redo: function() {
-      this.render();
-      return this.addAll();
-    },
-    addOne: function(gist) {
-      var view;
-      if (logDebug) {
-        console.log("gist view add one", gist);
-      }
-      view = new GistView({
-        model: gist
+    });
+  };
+
+  clearMain = function() {
+    return $("#main-page").html();
+  };
+
+  setMain = function() {
+    return $("#main-page").html($("#main-template").html());
+  };
+
+  setGists = function() {
+    clearMain();
+    return loadAndSet(gistUrl, function(data) {
+      data = gistTemplate({
+        gists: data
       });
-      return $('#gists-list').append(view.render().el);
-    },
-    addAll: function() {
-      if (logDebug) {
-        console.log("list view add all", Gists.length);
-      }
-      $('#gists-list').html('');
-      return Gists.each(this.addOne, this);
-    },
-    createFromForm: function() {
-      var codeVal;
-      if (logDebug) {
-        console.log("createFromForm");
-      }
-      codeVal = this.codeTextArea.val();
-      if (!codeVal) {
-        if (logDebug) {
-          console.log("codeVal", codeVal);
-        }
-        return false;
-      }
-      Gists.create({
-        code: codeVal
+      return $("#main-page").html(data);
+    });
+  };
+
+  setStars = function() {
+    clearMain();
+    return loadAndSet(starsUrl, function(data) {
+      data = starsTemplate({
+        stars: data
       });
-      this.codeTextArea.val("");
-      return false;
+      return $("#main-page").html(data);
+    });
+  };
+
+  setProfile = function() {
+    return loadAndSet(profileUrl, function(data) {
+      console.log("data", data);
+      return $("#profile").html(profileTemplate(data));
+    });
+  };
+
+  route = function() {
+    var location;
+    location = window.location.hash;
+    if (location === "#stars") {
+      return setStars();
+    } else if (location === "#gists") {
+      return setGists();
+    } else {
+      return setMain();
     }
-  });
+  };
 
-  new GistsView();
+  setProfile();
 
-  $("title").text("Gister");
+  $(window).bind('hashchange', route);
 
-  editor = ace.edit("code-view");
-
-  editor.getSession();
-
-  if (Gists.at(0)) {
-    editor.setValue(Gists.at(0).get("code"), -1);
-  }
+  route();
 
 }).call(this);
 
